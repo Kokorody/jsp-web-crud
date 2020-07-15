@@ -43,7 +43,8 @@
                                     <td><p>${item.expired_at}</p></td>
                                     <td>
                                         <a class="btn btn-sm btn-primary" 
-                                           href="#">Edit</a>
+                                           href="edit?id=${item.id}">
+                                            Edit</a>
                                         <a class="btn btn-sm btn-danger" 
                                            href="#">Delete</a>
                                     </td>

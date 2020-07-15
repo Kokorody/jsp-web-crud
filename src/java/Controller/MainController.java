@@ -39,6 +39,26 @@ public class MainController extends BaseController {
         return arrayList;
     }
     
+    public MainModel show(String id) throws SQLException {
+        MainModel model = new MainModel();
+        
+        Map<Integer, Object> map = new HashMap<>();
+        map.put(1, id);
+           
+        String sql = this.query.show;
+        ResultSet rs = this.getWithParameter(map, sql);
+        
+        if(rs.next()){
+            model.setId(rs.getString("id"));
+            model.setName(rs.getString("name"));
+            model.setCategory(rs.getString("category"));
+            model.setExpired_at(rs.getString("expired_at"));
+            model.setQty(rs.getInt("qty"));
+        }
+        
+        return model;
+    }
+    
     public boolean create(MainModel model) throws SQLException{
         Map<Integer, Object> map = new HashMap<>();
         map.put(1, model.getName());
@@ -47,6 +67,19 @@ public class MainController extends BaseController {
         map.put(4, model.getExpired_at());
            
         String sql = this.query.create;
+        
+        return this.preparedStatement(map, sql);
+    }
+    
+    public boolean update(MainModel model) throws SQLException{
+        Map<Integer, Object> map = new HashMap<>();
+        map.put(1, model.getName());
+        map.put(2, model.getCategory());
+        map.put(3, model.getQty());
+        map.put(4, model.getExpired_at());
+        map.put(5, model.getId());
+           
+        String sql = this.query.update;
         
         return this.preparedStatement(map, sql);
     }
