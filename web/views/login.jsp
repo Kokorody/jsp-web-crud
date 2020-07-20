@@ -24,8 +24,6 @@
                             <% out.print(request.getAttribute("alert")); %>
                         </div>
                     <% } %>
-                        
-                    
                     <form action="login" method="POST">
                         <div class="form-group">
                             <label>Username</label>

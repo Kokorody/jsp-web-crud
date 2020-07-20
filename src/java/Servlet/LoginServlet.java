@@ -85,8 +85,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            
+            String password = request.getParameter("password"); 
             
             AdminModel model = new AdminModel();
             model.setUsername(username);
@@ -94,8 +93,6 @@ public class LoginServlet extends HttpServlet {
             
             AdminController ac = new AdminController();
             ArrayList check = ac.login(model);
-            
-            
             if(check.isEmpty()){
                 request.setAttribute("alert", "Username or password is invalid!");
                 RequestDispatcher dispatch = 

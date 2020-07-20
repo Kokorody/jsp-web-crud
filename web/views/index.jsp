@@ -18,6 +18,9 @@
         <div class='container pt-4'>
             <jsp:include page="layouts/navbar.jsp"></jsp:include>
             <div class="row">
+                <div class="col-12 pb-3">
+                    <p>Hello, <% out.print(session.getAttribute("name")); %></p>
+                </div>
                 <div class="col-4 pb-4">
                     <a href="create" class="btn btn-sm btn-primary">Create</a>
                 </div>
