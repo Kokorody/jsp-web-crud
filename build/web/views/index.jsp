@@ -46,7 +46,8 @@
                                            href="edit?id=${item.id}">
                                             Edit</a>
                                         <a class="btn btn-sm btn-danger" 
-                                           href="#">Delete</a>
+                                           onclick="confirm('Apakah kamu yakin?')"
+                                           href="/BelajarJSP/delete?id=${item.id}">Delete</a>
                                     </td>
                                 </tr>
                             </c:forEach>

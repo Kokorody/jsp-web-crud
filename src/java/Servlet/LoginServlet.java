@@ -5,15 +5,19 @@
  */
 package Servlet;
 
+import Controller.AdminController;
 import Controller.MainController;
+import Model.AdminModel;
 import Model.MainModel;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +27,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author kiddy
  */
-public class EditServlet extends HttpServlet {
+@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
+public class LoginServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,15 +44,7 @@ public class EditServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet EditServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet EditServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            
         }
     }
 
@@ -63,26 +60,16 @@ public class EditServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
             HttpSession session = request.getSession(true);
             
-            if(session.getAttribute("auth") == null){
-                response.sendRedirect("login");
+            if(session.getAttribute("auth") != null){
+                response.sendRedirect("home");
             }
             else{
-                String id = request.getParameter("id");
-
-                MainController mc = new MainController();
-                MainModel model = mc.show(id);
-
-                request.setAttribute("product", model);
-                RequestDispatcher dispatch = request.
-                        getRequestDispatcher("/views/edit.jsp");
+                RequestDispatcher dispatch = 
+                        request.getRequestDispatcher("/views/login.jsp");
                 dispatch.forward(request, response);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(EditServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
@@ -97,32 +84,38 @@ public class EditServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String id = request.getParameter("id");
-            String name = request.getParameter("name");
-            String category = request.getParameter("category");
-            String expired = request.getParameter("expired_at");
-            String qty = request.getParameter("qty");
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
             
-            MainModel model = new MainModel();
-            model.setId(id);
-            model.setName(name);
-            model.setCategory(category);
-            model.setQty(Integer.parseInt(qty));
-            model.setExpired_at(expired);
             
-            MainController mc = new MainController();
-            boolean check = mc.update(model);
+            AdminModel model = new AdminModel();
+            model.setUsername(username);
+            model.setPassword(password);
             
-            if(check){
+            AdminController ac = new AdminController();
+            ArrayList check = ac.login(model);
+            
+            
+            if(check.isEmpty()){
+                request.setAttribute("alert", "Username or password is invalid!");
+                RequestDispatcher dispatch = 
+                        request.getRequestDispatcher("/views/login.jsp");
+                dispatch.forward(request, response);
+            } else {
                 // Go to Index Page
-                response.sendRedirect("");
+                HttpSession session = request.getSession(true);
+                session.setAttribute("id", check.get(0).toString());
+                session.setAttribute("name", check.get(1).toString());
+                session.setAttribute("username", check.get(2).toString());
+                session.setAttribute("auth", true);
+                response.sendRedirect("home");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(EditServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
+    /**bagian
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description

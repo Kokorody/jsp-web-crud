@@ -9,10 +9,6 @@ import Controller.MainController;
 import Model.MainModel;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +19,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author kiddy
  */
-public class EditServlet extends HttpServlet {
+public class DeleteServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +38,10 @@ public class EditServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EditServlet</title>");            
+            out.println("<title>Servlet DeleteServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EditServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,7 +59,6 @@ public class EditServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
             HttpSession session = request.getSession(true);
             
             if(session.getAttribute("auth") == null){
@@ -72,17 +67,17 @@ public class EditServlet extends HttpServlet {
             else{
                 String id = request.getParameter("id");
 
-                MainController mc = new MainController();
-                MainModel model = mc.show(id);
+                MainModel model = new MainModel();
+                model.setId(id);
 
-                request.setAttribute("product", model);
-                RequestDispatcher dispatch = request.
-                        getRequestDispatcher("/views/edit.jsp");
-                dispatch.forward(request, response);
+                MainController mc = new MainController();
+                boolean check = mc.delete(model);
+
+                if(check){
+                    // Go to Index Page
+                    response.sendRedirect("");
+                }
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(EditServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
@@ -96,30 +91,7 @@ public class EditServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            String id = request.getParameter("id");
-            String name = request.getParameter("name");
-            String category = request.getParameter("category");
-            String expired = request.getParameter("expired_at");
-            String qty = request.getParameter("qty");
-            
-            MainModel model = new MainModel();
-            model.setId(id);
-            model.setName(name);
-            model.setCategory(category);
-            model.setQty(Integer.parseInt(qty));
-            model.setExpired_at(expired);
-            
-            MainController mc = new MainController();
-            boolean check = mc.update(model);
-            
-            if(check){
-                // Go to Index Page
-                response.sendRedirect("");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(EditServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**

@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -53,9 +54,16 @@ public class CreateServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatch = request.
-                    getRequestDispatcher("/views/create.jsp");
-            dispatch.forward(request, response);
+        HttpSession session = request.getSession(true);
+            
+            if(session.getAttribute("auth") == null){
+                response.sendRedirect("login");
+            }
+            else{
+                RequestDispatcher dispatch = 
+                        request.getRequestDispatcher("/views/create.jsp");
+                dispatch.forward(request, response);
+            }
     }
 
     /**

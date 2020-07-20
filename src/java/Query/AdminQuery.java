@@ -10,5 +10,5 @@ package Query;
  * @author kiddy
  */
 public class AdminQuery {
-    
+    public String login = "SELECT * FROM admin WHERE username = ?";
 }
